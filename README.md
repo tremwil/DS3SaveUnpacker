@@ -1,4 +1,4 @@
-# Turns out if doesnt work right now, I will find the problem and patch soon. 
+# Turns out it doesnt work right now, I will find the problem and patch soon. 
 
 # DS3SavePatcher
 
