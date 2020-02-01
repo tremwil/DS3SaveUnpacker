@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="BinReader.cs" />
     <Compile Include="BND4Entry.cs" />
-    <Compile Include="BND4EntryHeader32.cs" />
+    <Compile Include="BND4EntryHeader.cs" />
     <Compile Include="BND4File.cs" />
     <Compile Include="BND4Header.cs" />
     <Compile Include="GenBitConverter.cs" />

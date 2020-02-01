@@ -53,6 +53,22 @@ namespace DS3SaveEditor
             }
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Read a 1-byte wide ShiftJIS null-terminated string.
+        /// </summary>
+        /// <returns></returns>
+        public string ReadShiftJIS()
+        {
+            List<byte> buffer = new List<byte>();
+            byte chr = ReadByte();
+            while (chr != 0)
+            {
+                buffer.Add(chr);
+                chr = ReadByte();
+            }
+            return Encoding.GetEncoding("shift_jis").GetString(buffer.ToArray());
+        }
     }
 
     class BinWriter: BinaryWriter
@@ -97,6 +113,17 @@ namespace DS3SaveEditor
                 Write((ushort)chr);
             }
             Write((ushort)0);
+        }
+
+        /// <summary>
+        /// Write a 1-byte wide ShiftJIS null-terminated string.
+        /// </summary>
+        /// <returns></returns>
+        public void WriteShiftJIS(string str)
+        {
+            byte[] bytes = Encoding.GetEncoding("shift_jis").GetBytes(str);
+            Array.Resize(ref bytes, bytes.Length + 1);
+            Write(bytes);
         }
     }
 }
