@@ -16,4 +16,5 @@ When unpacking a save, you get 12 `USER_DATA XXX` files. Those numbered `000` to
 Dark Souls III saves are stored as BND4 archives, a binder file format used by FromSoftware since Dark Souls II. In the case of DS3, each `USER_DATA XXX` contains the following data:
 - A 16-byte MD5 checksum of the encrypted data (including the IV)
 - The 16-byte initialisation vector (IV) used for encryption
-- The entry data, encrypted using 128-bit AES-CBC with the key `FD464D695E69A39A10E319A7ACE8B7FA`. Credit to [Atvaark](https://github.com/Atvaark) for finding this key. More information about FromSoft file formats are available on his [SoulsFormat](https://github.com/Atvaark/DarkSoulsIII.FileFormats) repo. 
+- The entry data, encrypted using 128-bit AES-CBC with the key `FD464D695E69A39A10E319A7ACE8B7FA`. Credit to [Atvaark](https://github.com/Atvaark) for finding this key. More information about FromSoft file formats are available on his [
+DarkSoulsIII.FileFormats](https://github.com/Atvaark/DarkSoulsIII.FileFormats) repo. 
