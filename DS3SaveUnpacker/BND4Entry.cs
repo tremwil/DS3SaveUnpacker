@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace DS3SaveEditor
+namespace DS3SaveUnpacker
 {
     class BND4Entry
     {
@@ -74,7 +74,7 @@ namespace DS3SaveEditor
             return buff;
         }
 
-        public void SetEncryptedData(byte[] newData, byte[] IV = null)
+        public void SetEncryptedData(byte[] newData, bool usePreviousIV = true)
         {
             if (DEBUG) Console.WriteLine(string.Format("[BND4Entry] SET ENCRYPTED DATA OF '{0}'", name));
 
@@ -83,17 +83,22 @@ namespace DS3SaveEditor
             AES.BlockSize = 128;
             AES.Padding = PaddingMode.PKCS7;
 
-            if (IV == null) 
+            if (usePreviousIV) 
             {
-                IV = new byte[16];
+                byte[] IV = new byte[16];
                 Array.Copy(this.data, 16, IV, 0, 16);
+                AES.IV = IV;
             }
-            AES.IV = IV;
+            else
+            {
+                AES.GenerateIV();
+            }
+
             AES.Key = DS3_KEY;
 
             int padLen = 16 - newData.Length % 16;
             data = new byte[32 + newData.Length + padLen];
-            Array.Copy(IV, 0, data, 16, 16);
+            Array.Copy(AES.IV, 0, data, 16, 16);
 
             using (MemoryStream m = new MemoryStream(data, 32, data.Length - 32, true))
             {

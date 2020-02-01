@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace DS3SaveEditor
+namespace DS3SaveUnpacker
 {
     class BinReader: BinaryReader
     {

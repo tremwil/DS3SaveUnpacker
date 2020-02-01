@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
-namespace DS3SaveEditor
+namespace DS3SaveUnpacker
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 0x40)]
     struct BND4Header
@@ -49,6 +49,12 @@ namespace DS3SaveEditor
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
         public byte[] unknown3;
 
+        /// <summary>
+        /// Create a BND4Header with given parameters.
+        /// </summary>
+        /// <param name="fileCnt"></param>
+        /// <param name="dataOffset"></param>
+        /// <param name="isUnicode"></param>
         public BND4Header(uint fileCnt, ulong dataOffset, bool isUnicode)
         {
             BNDVers = 0x3444_4E42;
@@ -61,6 +67,15 @@ namespace DS3SaveEditor
             this.fileCnt = fileCnt;
             this.dataOffset = dataOffset;
             this.isUnicode = isUnicode;
+        }
+
+        /// <summary>
+        /// Throw an exception if this header does not make sense.
+        /// </summary>
+        public void AssertIntegrity()
+        {
+            Utils.Assert(BNDVers == 0x3444_4E42 && signature == 0x3130_3030_3030_3030, "Invalid BND4 header");
+            Utils.Assert(entryHeaderSize == 0x20, "Unsupported entry header size");
         }
     }
 }

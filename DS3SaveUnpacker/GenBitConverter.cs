@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.IO;
 
-namespace DS3SaveEditor
+namespace DS3SaveUnpacker
 {
     static class GenBitConverter
     {
