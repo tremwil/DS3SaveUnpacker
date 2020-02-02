@@ -1,5 +1,3 @@
-# Turns out it doesnt work right now, I will find the problem and patch soon. 
-
 # DS3SavePatcher
 
 Simple console program with a few features related to Dark Souls III saves:
