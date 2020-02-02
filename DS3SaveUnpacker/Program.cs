@@ -23,12 +23,13 @@ namespace DS3SaveUnpacker
   [3] Unpack unencrypted BND4 archive
   [4] Pack unencrypted BND4 archive
   [5] Patch SL2 save file linked account
-  [6] Exit
+  [6] Recursively patch all saves in a folder
+  [7] Exit
 ");
 
                 char key;
-                do { key = Console.ReadKey(true).KeyChar; } while (key < '1' || key > '6');
-                if (key == '6') { return; }
+                do { key = Console.ReadKey(true).KeyChar; } while (key < '1' || key > '7');
+                if (key == '7') { return; }
 
                 // Get default DS3 Save location & prompt open save file
                 var ds3Folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DarkSoulsIII\\");
@@ -43,6 +44,43 @@ namespace DS3SaveUnpacker
                     };
                     if (diagFolder.ShowDialog() != CommonFileDialogResult.Ok) { continue; }
                     BND4File.Pack(diagFolder.FileName, key == '2');
+
+                    Console.Write("\nDone, press any key to return to menu");
+                    Console.ReadKey(true);
+                    continue;
+                }
+
+                if (key == '6')
+                {
+                    var diagFolder = new CommonOpenFileDialog()
+                    {
+                        Title = "Select root directory",
+                        IsFolderPicker = true,
+                        InitialDirectory = ds3Folder
+                    };
+                    if (diagFolder.ShowDialog() != CommonFileDialogResult.Ok) { continue; }
+
+                    Console.WriteLine("Proceed carefully. Entering the wrong ID will make the save unreadable.");
+
+                    ulong steamID = 0;
+                    while (steamID == 0)
+                    {
+                        Console.Write("Enter your 64-bit Steam ID (number in profile URL): ");
+                        if (!ulong.TryParse(Console.ReadLine(), out steamID))
+                        {
+                            Console.WriteLine("Please input a valid number.");
+                        }
+                    }
+
+                    foreach (string saveFile in Directory.EnumerateFiles(diagFolder.FileName, "*.sl2", SearchOption.AllDirectories))
+                    {
+                        Console.WriteLine("  Patching " + saveFile + "...");
+
+                        BND4File BND = new BND4File(saveFile);
+
+                        BND.PatchDS3AccountFlag(steamID);
+                        BND.Save(saveFile);
+                    }
 
                     Console.Write("\nDone, press any key to return to menu");
                     Console.ReadKey(true);

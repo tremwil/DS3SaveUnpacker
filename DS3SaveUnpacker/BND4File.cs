@@ -265,14 +265,28 @@ namespace DS3SaveUnpacker
         /// <param name="steamID"></param>
         public void PatchDS3AccountFlag(ulong steamID)
         {
-            if (DEBUG) Console.WriteLine("[DEBUG] PATCHING ACCOUNT FLAG...");
+            if (DEBUG) Console.WriteLine("[DEBUG] PATCH MENU ACCOUNT FLAG...");
 
-            uint accNum = (uint)(steamID & 0xffff_ffffUL);
-            BND4Entry data10 = findEntryByName("USER_DATA010");
+            BND4Entry menuEntry = entries[10];
+            // Overwrite account flag in menu file (Responsible for "Cannot load save" msg on startup)
+            byte[] menuData = menuEntry.DecryptData();
+            Array.Copy(BitConverter.GetBytes(steamID), 0, menuData, 0x8, 8);
+            menuEntry.SetEncryptedData(menuData);
+            // Get used save slots bool array to overwrite save-specific account flags
+            byte[] usedCharSlots = new byte[10];
+            Array.Copy(menuData, 0x1098, usedCharSlots, 0, 10);
+            // For each used char. slot, patch its account flag
+            for (int i = 0; i < 10; i++)
+            {
+                if (0 == usedCharSlots[i]) { continue; }
+                if (DEBUG) Console.WriteLine("[DEBUG] PATCH ACCOUNT FLAG CHAR #" + i.ToString());
 
-            byte[] buff = data10.DecryptData();
-            Array.Copy(BitConverter.GetBytes(accNum), 0, buff, 0x8, 4);
-            data10.SetEncryptedData(buff);
+                byte[] slotData = entries[i].DecryptData();
+                // This offset always seems to go 0x6F under the account flag
+                uint flagOffset = BitConverter.ToUInt32(slotData, 0x58) + 0x6F;
+                Array.Copy(BitConverter.GetBytes(steamID), 0, slotData, flagOffset, 8);
+                entries[i].SetEncryptedData(slotData);
+            }
 
             if (DEBUG) Console.WriteLine("[DEBUG] ACCOUNT FLAG PATCHED");
         }
