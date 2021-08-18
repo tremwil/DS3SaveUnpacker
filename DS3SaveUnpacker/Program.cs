@@ -43,7 +43,18 @@ namespace DS3SaveUnpacker
                         InitialDirectory = ds3Folder
                     };
                     if (diagFolder.ShowDialog() != CommonFileDialogResult.Ok) { continue; }
-                    BND4File.Pack(diagFolder.FileName, key == '2');
+                    BND4File file = BND4File.Pack(diagFolder.FileName, key == '2');
+
+                    var diagSave = new SaveFileDialog()
+                    {
+                        Title = "Save packet file at...",
+                        DefaultExt = "sl2",
+                        FileName = "DS30000.sl2",
+                        InitialDirectory = ds3Folder
+                    };
+                    if (diagSave.ShowDialog() != DialogResult.OK) { continue; }
+
+                    file.Save(diagSave.FileName);
 
                     Console.Write("\nDone, press any key to return to menu");
                     Console.ReadKey(true);

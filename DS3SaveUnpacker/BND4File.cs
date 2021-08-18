@@ -235,6 +235,7 @@ namespace DS3SaveUnpacker
 
             for (int i = 0; i < files.Length; i++)
             {
+                BND.entries[i] = new BND4Entry();
                 BND.entries[i].name = Path.GetFileName(files[i]);
 
                 byte[] data = File.ReadAllBytes(files[i]);
